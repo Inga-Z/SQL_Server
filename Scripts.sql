@@ -1,3 +1,15 @@
+--all information abot backup
+SELECT bs.database_name, bm.physical_device_name, 
+CASE bs.[type]
+WHEN 'D' THEN 'Full'
+WHEN 'I' THEN 'Diff'
+WHEN 'L' THEN 'Log'
+END 'type', bs.backup_size/1024/1024/1024 'size',
+bs.backup_start_date, bs.backup_finish_date, bs.[user_name]
+FROM msdb..backupset bs
+JOIN msdb..backupmediafamily bm ON bs.media_set_id = bm.media_set_id
+ORDER BY backup_start_date DESC
+
 -- backup history
 select
 bs.database_name
