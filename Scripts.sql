@@ -1,4 +1,4 @@
---all information abot backup
+-- all information about backup
 SELECT bs.database_name, bm.physical_device_name, 
 CASE bs.[type]
 WHEN 'D' THEN 'Full'
@@ -9,6 +9,13 @@ bs.backup_start_date, bs.backup_finish_date, bs.[user_name]
 FROM msdb..backupset bs
 JOIN msdb..backupmediafamily bm ON bs.media_set_id = bm.media_set_id
 ORDER BY backup_start_date DESC
+
+-- Query to List All Jobs with Owners
+SELECT s.name AS JobName, l.name AS JobOwner
+FROM msdb..sysjobs s
+LEFT JOIN master.sys.syslogins l ON s.owner_sid = l.sid
+WHERE l.name IS NOT NULL
+ORDER by l.name
 
 -- backup history
 select
