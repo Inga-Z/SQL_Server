@@ -17,6 +17,11 @@ LEFT JOIN master.sys.syslogins l ON s.owner_sid = l.sid
 WHERE l.name IS NOT NULL
 ORDER by l.name
 
+-- You can use below query to return all job names with owners, even for those logins does not exists
+SELECT NAME AS JobName, SUSER_SNAME(owner_sid) AS JobOwner
+FROM msdb..sysjobs
+ORDER BY NAME
+
 -- backup history
 select
 bs.database_name
