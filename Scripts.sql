@@ -47,3 +47,18 @@ and bs.type = 'L' -- log backup
 or bs.type = 'D' -- full backup
 -- and bs.type = 'I' -- diff backup
 order by bs.backup_finish_date desc
+
+-- файлы БД с размером в Mb 
+SELECT  @@SERVERNAME AS Server ,
+        a.name AS DBName ,
+        a.recovery_model_Desc AS RecoveryModel ,
+        a.Compatibility_level AS CompatiblityLevel ,
+        a.create_date ,
+        a.state_desc,
+				mf.type_desc,
+				a.collation_name,
+				mf.size/128 as 'Size_MB' 
+FROM    sys.databases a
+	join sys.master_files mf on a.database_id = mf.database_id
+where a.database_id > 4
+ORDER BY a.name;
