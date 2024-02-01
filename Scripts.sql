@@ -17,9 +17,9 @@ SELECT  @@SERVERNAME AS Server ,
         a.Compatibility_level AS CompatiblityLevel ,
         a.create_date ,
         a.state_desc,
-				mf.type_desc,
-				a.collation_name,
-				mf.size/128 as 'Size_MB' 
+	mf.type_desc,
+	a.collation_name,
+	mf.size/128 as 'Size_MB' 
 FROM    sys.databases a
 	join sys.master_files mf on a.database_id = mf.database_id
 where a.database_id > 4
@@ -45,3 +45,27 @@ FROM sys.dm_database_encryption_keys dek
 LEFT JOIN sys.certificates cer ON dek.encryptor_thumbprint = cer.thumbprint 
 INNER JOIN sys.databases db ON dek.database_id = db.database_id 
 WHERE dek.encryption_state = 3
+
+--First query shows the account (credential identity) linked to the proxy Second Query shows what Job and Step is using a Proxy
+-- Search Credentials (shows account for Name)
+use msdb
+go
+select *
+from sys.credentials
+	
+--Search Jobs where there is a 'Run As' proxy and get the name of that proxy
+use msdb
+GO
+select  sysjobsteps.job_id
+, sysjobs.name as 'JobName'
+, sysjobsteps.step_id
+, sysjobsteps.step_name
+, sysjobsteps.subsystem
+, sysjobsteps.last_run_date
+, sysjobsteps.proxy_id
+--, sysjobsteps.step_uid
+, sysproxies.name as 'ProxyName'
+from sysjobsteps
+    left join dbo.sysproxies on sysjobsteps.proxy_id = sysproxies.proxy_id
+    left join dbo.sysjobs on sysjobsteps.job_id = sysjobs.job_id
+where sysjobsteps.proxy_id > 0
