@@ -1,3 +1,8 @@
+--db name, owner
+select db.name, db.database_id, l.name as Owner_Login, db.state_desc as Current_State, is_read_only
+from sys.databases db
+	left join master.sys.syslogins l on db.owner_sid = l.sid
+	
 -- Query to List All Jobs with Owners
 SELECT s.name AS JobName, l.name AS JobOwner
 FROM msdb..sysjobs s
