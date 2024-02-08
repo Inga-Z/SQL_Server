@@ -1,3 +1,9 @@
+-- проверить порт
+USE MASTER
+GO
+xp_readerrorlog 0, 1, N'Server is listening on'
+GO
+
 --db name, owner
 select db.name, db.database_id, l.name as Owner_Login, db.state_desc as Current_State, is_read_only
 from sys.databases db
