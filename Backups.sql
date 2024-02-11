@@ -7,7 +7,8 @@ WHEN 'L' THEN 'Log'
 END 'type', bs.backup_size/1024/1024/1024 'size',
 bs.backup_start_date, bs.backup_finish_date, bs.[user_name]
 FROM msdb..backupset bs
-JOIN msdb..backupmediafamily bm ON bs.media_set_id = bm.media_set_id
+	JOIN msdb..backupmediafamily bm ON bs.media_set_id = bm.media_set_id
+--where bs.database_name = 'insert_db_name'
 ORDER BY backup_start_date DESC
 	
 -- what tool to backup
@@ -62,9 +63,10 @@ where
 bs.backup_finish_date > dateadd(dd,-1,getdate())
 -- and bs.database_name in ('PADM')
 -- and bs.database_name like 'Flex%'
-and bs.type = 'L' -- log backup
-or bs.type = 'D' -- full backup
--- and bs.type = 'I' -- diff backup
+--and bs.type = 'L' -- log backup
+and bs.type = 'D' -- full backup
+--or bs.type = 'D' -- full backup
+and bs.type = 'I' -- diff backup
 order by bs.backup_finish_date desc
 
 SELECT sdb.Name AS DatabaseName,
