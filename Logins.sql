@@ -1,3 +1,37 @@
+--list of logins and last time each logged in
+SELECT [Login] = login_name 
+	,[Last Login Time] = MAX(login_time)
+FROM sys.dm_exec_sessions
+GROUP BY [login_name];
+
+--all logins in the last 4 hours
+SELECT [Login] = login_name
+	,[Last Login Time] = login_time
+	,[Host] = HOST_NAME
+	,[Program] = PROGRAM_NAME
+	,[Client Interface] =  client_interface_name
+	,[Database] = DB_NAME(database_id)
+FROM sys.dm_exec_sessions
+WHERE [login_time] > DATEADD(HH,-4,getdate())--modify date as needed
+ORDER BY [login_time] desc
+
+--login counts for the last 4 hours
+SELECT [Login] = login_name
+	,[Last Login Time] = MAX(login_time)
+	,[Number Of Logins] = COUNT(*)
+FROM sys.dm_exec_sessions
+WHERE [login_time] > DATEADD(HH,-4,getdate())--modify date as needed
+GROUP BY [login_name]
+ORDER BY [Login] desc
+
+--check for logins with sysadmin access
+SELECT [Login] = name
+	,[Login Type] = type_desc
+	,[Disabled] = is_disabled
+FROM     master.sys.server_principals 
+WHERE    IS_SRVROLEMEMBER ('sysadmin',name) = 1
+ORDER BY [Login]
+
 --List all access provisioned to a sql user or windows user/group directly 
 SELECT  
     [UserName] = CASE princ.[type] 
