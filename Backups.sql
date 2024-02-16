@@ -74,3 +74,22 @@ MAX(bus.backup_finish_date) AS LastBackUpTime
 FROM sys.sysdatabases sdb
 LEFT OUTER JOIN msdb.dbo.backupset bus ON bus.database_name = sdb.name
 GROUP BY sdb.Name
+
+--сделать бэкап разбитый на файлы (актуально для большой БД)
+BACKUP DATABASE [AdventureWorks2017] TO
+DISK = N'D:\BACKUP\AdventureWorks2017_1.bak',
+DISK = N'D:\BACKUP\AdventureWorks2017_2.bak',
+DISK = N'D:\BACKUP\AdventureWorks2017_3.bak'
+WITH  COPY_ONLY, NOFORMAT, NOINIT,  NAME = N'AdventureWorks2017-Full Database Backup', 
+SKIP, NOREWIND, NOUNLOAD, COMPRESSION,  STATS = 10, CHECKSUM
+GO
+declare @backupSetId as int
+select @backupSetId = position from msdb..backupset 
+	where database_name=N'AdventureWorks2017' and backup_set_id=(select max(backup_set_id) from msdb..backupset where database_name=N'AdventureWorks2017' )
+if @backupSetId is null begin raiserror(N'Verify failed. Backup information for database ''AdventureWorks2017'' not found.', 16, 1) end
+RESTORE VERIFYONLY FROM  
+DISK = N'D:\BACKUP\AdventureWorks2017_1.bak',
+DISK = N'D:\BACKUP\AdventureWorks2017_2.bak',
+DISK = N'D:\BACKUP\AdventureWorks2017_3.bak'
+WITH  FILE = @backupSetId,  NOUNLOAD,  NOREWIND
+GO
