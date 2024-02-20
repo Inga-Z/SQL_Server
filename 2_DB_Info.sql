@@ -1,3 +1,25 @@
+-- файлы БД с размером в Mb 
+SELECT  @@SERVERNAME AS Server ,
+        a.name AS DBName,
+	mf.name AS [File Name],
+	mf.type_desc,
+	mf.physical_name,
+        a.recovery_model_Desc AS RecoveryModel ,
+        a.Compatibility_level AS CompatiblityLevel ,
+        a.create_date ,
+        a.state_desc,
+	a.collation_name,
+	mf.size/128 as 'Size_MB',
+	mf.growth AS [Growth Value],
+	CASE 
+		WHEN mf.is_percent_growth = 1 THEN 'Percentage Growth' 
+		ELSE 'MB Growth'
+		END AS [Growth Type]
+FROM    sys.databases a
+	join sys.master_files mf on a.database_id = mf.database_id
+--where a.database_id > 4
+ORDER BY a.name;
+
 -- информация о размере БД на инстансе
 SELECT 
       database_name = DB_NAME(database_id)
