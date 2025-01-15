@@ -10,6 +10,8 @@
 
 ### Определить список баз данных и их размер
 
+Запрос для получения списка баз данных и размер
+
     ```sql
     SELECT 
       database_name = DB_NAME(database_id)
@@ -33,7 +35,9 @@
 
 ### Проверить наличие линкованных серверов
 
-    ```
+Скрипт получения списка линкованных серверов
+
+    ```sql
     SELECT  @@SERVERNAME AS Server ,
         Server_Id AS  LinkedServerID ,
         name AS LinkedServer ,
