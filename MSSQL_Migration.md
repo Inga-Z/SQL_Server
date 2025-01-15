@@ -12,7 +12,7 @@
 
 Запрос для получения списка пользовательских баз данных и размер в MB
 
-    ```sql
+```sql
     SELECT 
       database_name = DB_NAME(database_id)
     , log_size_mb = CAST(SUM(CASE WHEN type_desc = 'LOG' THEN size END) * 8. / 1024 AS DECIMAL(10,2))
@@ -21,7 +21,7 @@
     FROM sys.master_files WITH(NOWAIT)
     WHERE database_id > 4 --database_id = DB_ID('db_name') -- for db 
     GROUP BY database_id
-    ```
+```
 
 ### Опеределить список логинов
 
@@ -37,7 +37,7 @@
 
 Скрипт получения списка линкованных серверов
 
-    ```sql
+```sql
     SELECT  @@SERVERNAME AS Server ,
         Server_Id AS  LinkedServerID ,
         name AS LinkedServer ,
@@ -45,6 +45,6 @@
         Provider ,
         Data_Source ,
         Modify_Date
-    FROM    sys.servers
+    FROM sys.servers
     ORDER BY name;
-    ```
+```
