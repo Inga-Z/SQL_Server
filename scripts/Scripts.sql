@@ -9,7 +9,7 @@ FROM    sys.dm_exec_sessions
 WHERE   database_id > 0
         AND DB_NAME(database_id) NOT IN ( 'master', 'msdb' )
 GROUP BY database_id ,
-         login_name
+        login_name
 ORDER BY DatabaseName;
 
 -- проверить порт
@@ -30,13 +30,6 @@ LEFT JOIN master.sys.syslogins l ON s.owner_sid = l.sid
 WHERE l.name IS NOT NULL
 ORDER by l.name
 
--- db size
-SELECT      sys.databases.name AS [Database Name],
-        CONVERT(VARCHAR,SUM(size)*8/1024/1024)+' GB' AS [Size]
-     FROM        sys.databases
-     JOIN        sys.master_files
-     ON          sys.databases.database_id=sys.master_files.database_id
-     GROUP BY    sys.databases.name
 
 -- You can use below query to return all job names with owners, even for those logins does not exists
 SELECT NAME AS JobName, SUSER_SNAME(owner_sid) AS JobOwner

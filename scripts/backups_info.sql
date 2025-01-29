@@ -23,13 +23,20 @@ FROM msdb..backupset bs
 JOIN msdb..backupmediafamily bm ON bs.media_set_id = bm.media_set_id
 ORDER BY backup_start_date DESC
 
---последним бэкап
+--последний бэкап
 SELECT  @@Servername AS ServerName ,
         d.Name AS DBName ,
+		b.type,
+		CASE b.[type]
+			WHEN 'D' THEN 'Full'
+			WHEN 'I' THEN 'Diff'
+			WHEN 'L' THEN 'Log'
+		END 'type',
         MAX(b.backup_finish_date) AS LastBackupCompleted
 FROM    sys.databases d
-        LEFT OUTER JOIN msdb..backupset b ON b.database_name = d.name AND b.[type] = 'D'
-GROUP BY d.Name
+        LEFT OUTER JOIN msdb..backupset b ON b.database_name = d.name AND b.[type] in ('D', 'I', 'L')
+GROUP BY d.Name, b.type
+HAVING MAX(b.backup_finish_date) is not null
 ORDER BY d.Name;
 
 --сразу узнаете путь к файлу с последним бэкапом

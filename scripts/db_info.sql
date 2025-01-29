@@ -1,6 +1,10 @@
+-- общая информация о БД
+sp_helpdb [db_name]
+
 -- файлы БД с размером в Mb 
-SELECT  @@SERVERNAME AS Server ,
-        a.name AS DBName,
+SELECT  
+	@@SERVERNAME AS Server ,
+    a.name AS DBName,
 	mf.name AS [File Name],
 	mf.type_desc,
 	mf.physical_name,
@@ -17,17 +21,26 @@ SELECT  @@SERVERNAME AS Server ,
 		END AS [Growth Type]
 FROM    sys.databases a
 	join sys.master_files mf on a.database_id = mf.database_id
---where a.database_id > 4
+where a.database_id > 4 --and a.name = 'db_name'
 ORDER BY a.name;
 
 -- информация о размере БД на инстансе
 SELECT 
-      database_name = DB_NAME(database_id)
+    database_name = DB_NAME(database_id)
     , log_size_mb = CAST(SUM(CASE WHEN type_desc = 'LOG' THEN size END) * 8. / 1024 AS DECIMAL(8,2))
     , row_size_mb = CAST(SUM(CASE WHEN type_desc = 'ROWS' THEN size END) * 8. / 1024 AS DECIMAL(8,2))
     , total_size_mb = CAST(SUM(size) * 8. / 1024 AS DECIMAL(8,2))
 FROM sys.master_files WITH(NOWAIT)
 WHERE database_id > 4 --database_id = DB_ID('db_name') -- for db 
+GROUP BY database_id
+
+SELECT 
+    database_name = DB_NAME(database_id)
+    , log_size_mb = CAST(SUM(CASE WHEN type_desc = 'LOG' THEN size END) * 8. / 1024 AS DECIMAL(10,2))
+    , row_size_mb = CAST(SUM(CASE WHEN type_desc = 'ROWS' THEN size END) * 8. / 1024 AS DECIMAL(10,2))
+    , total_size_mb = CAST(SUM(size) * 8. / 1024 AS DECIMAL(10,2))
+FROM sys.master_files WITH(NOWAIT)
+WHERE database_id > 4 --and database_id = DB_ID('')
 GROUP BY database_id
 
 --проверить % выполнение команд и сколько времени до завершения

@@ -26,7 +26,7 @@ GROUP BY database_id;
 ### Опеределить список логинов
 
 Шаги переноса логинов:
-1. запустить на сервер A скрипт [код](https://github.com/Inga-Z/SQL_Server/blob/main/sp_help_revlogin.sql), который создаст хранимую процедуру 'sp_help_revlogin'
+1. запустить на сервер A скрипт [код](https://github.com/Inga-Z/SQL_Server/blob/main/procedure/sp_help_revlogin.sql), который создаст хранимую процедуру 'sp_help_revlogin'
 2. запустить хранимую процедуру 'sp_help_revlogin' для формирования списка логинов
 ```sql
 EXEC sp_help_revlogin;
